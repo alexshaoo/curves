@@ -59,6 +59,29 @@ def redraw():
   for i in range(l):
     pygame.draw.rect(screen, BLUE, (points[i][0]-MARGIN, points[i][1]-MARGIN, 2*MARGIN, 2*MARGIN), 5)
 
+  lagrange_button.draw(screen, (0, 0, 0))
+  bezier_button.draw(screen, (0, 0, 0))
+  hermite_cubic_button.draw(screen, (0, 0, 0))
+  cubic_spline_button.draw(screen, (0, 0, 0))
+
+  if abs(selected_button) = 1:
+    curve_type = "Curve Type: Lagrange"
+  elif abs(selected_button) = 2:
+    curve_type = "Curve Type: Bezier"
+  elif abs(selected_button) = 3:
+    curve_type = "Curve Type: Hermite Cubic"
+  elif abs(selected_button) = 4:
+    curve_type = "Curve Type: Cubic Spline"
+  else:
+    curve_type = "Curve Type: None"
+
+  font = pygame.font.SysFont("freesans", 20)
+  curve_text = font.render(curve_type, True, BLACK)
+  screen.blit(curve_text, (10, 10))
+
+def lagrange():
+  pass
+
 def bezier():
   redraw()
   l = len(points)
@@ -68,7 +91,31 @@ def bezier():
       z += np.dot((math.factorial(l-1) / (math.factorial(j) * math.factorial(l-j-1))) * (1-i)**(l-j-1) * i**j, points[j])
     pygame.draw.circle(screen, RED, (int(z[0]), int(z[1])), 3)
 
+def hermite_cubic():
+  pass
 
+def cubic_spline():
+  pass
+
+def draw_curve(color=GREEN, thickness=2):
+  l = len(points)
+  if l < 2:
+    return
+  for i in range(l-1):
+    pygame.draw.line(screen, color, points[i], points[i+1], thickness)
+  for i in range(l):
+    pygame.draw.rect(screen, BLUE, (points[i][0]-MARGIN, points[i][1]-MARGIN, 2*MARGIN, 2*MARGIN), 5)
+    if l > 2:
+      if selected_button == 1:
+        lagrange()
+      elif selected_button == 2:
+        bezier()
+      elif selected_button == 3:
+        hermite_cubic()
+      elif selected_button == 4:
+        cubic_spline()
+      else:
+        pass
 
 run = True
 pressed = 0
@@ -77,6 +124,7 @@ old_left_click = 0
 old_right_click = 0
 
 selected = -1
+selected_button = -1
 bezier_button = button((0,255,0),650,200,120,70,"Bezier")
 
 while run:
