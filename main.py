@@ -14,6 +14,7 @@ WIDTH, HEIGHT = 1280, 720
 DIMENSIONS = (WIDTH, HEIGHT)
 FPS = 165
 FONT = pygame.font.SysFont("freesans", 20)
+CURVES = ["lagrange", "bezier", "hermite_cubic", "cubic_spline"]
 
 pygame.init()
 screen = pygame.display.set_mode(DIMENSIONS)
@@ -119,7 +120,8 @@ old_right_click = 0
 
 selected = -1
 selected_button = -1
-bezier_button = button((0,255,0),650,200,120,70,"Bezier")
+
+lagrange_button, bezier_button, hermite_cubic_button, cubic_spline_button = [button(BLACK, 650, 100*i, 100, 30, CURVES[i]) for i in range(4)]
 
 while run:
   clock.tick(FPS)
