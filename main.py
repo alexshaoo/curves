@@ -12,7 +12,7 @@ MARGIN = 5
 STEP = 0.01
 WIDTH, HEIGHT = 1280, 720
 DIMENSIONS = (WIDTH, HEIGHT)
-FPS = 165
+FPS = 60
 FONT = pygame.font.SysFont("freesans", 20)
 CURVES = ["lagrange", "bezier", "hermite_cubic", "cubic_spline"]
 
@@ -124,9 +124,13 @@ selected_button = -1
 lagrange_button, bezier_button, hermite_cubic_button, cubic_spline_button = [button(BLACK, 650, 100*i, 100, 30, CURVES[i]) for i in range(4)]
 
 while run:
-  clock.tick(FPS)
-  frameRate = int(clock.get_fps())
-  pygame.display.set_caption("Bezier Curve")
+  time_passed = clock.tick(FPS)
+  # frameRate = int(clock.get_fps())
+
+  lagrange_button.draw(screen, (0, 0, 0))
+  bezier_button.draw(screen, (0, 0, 0))
+  hermite_cubic_button.draw(screen, (0, 0, 0))
+  cubic_spline_button.draw(screen, (0, 0, 0))
 
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
@@ -137,8 +141,23 @@ while run:
 
     pos = pygame.mouse.get_pos()
     if event.type == pygame.MOUSEBUTTONDOWN:
+      l = len(points)
       pressed = -1
-      bezier()
+      if l > 2:
+        if lagrange_button.clicked(pos):
+          selected_button = 1
+          lagrange()
+        elif bezier_button.clicked(pos):
+          selected_button = 2
+          bezier()
+        elif hermite_cubic_button.clicked(pos):
+          selected_button = 3
+          hermite_cubic()
+        elif cubic_spline_button.clicked(pos):
+          selected_button = 4
+          cubic_spline()
+        else:
+          selected_button = -1
     elif event.type == pygame.MOUSEBUTTONUP:
       pressed = 1
     else:
