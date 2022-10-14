@@ -2,6 +2,8 @@ import pygame
 import math
 import numpy as np
 
+pygame.init()
+
 # constants
 WHITE = (235, 235, 235)
 BLACK = (20, 20, 20)
@@ -13,10 +15,9 @@ STEP = 0.01
 WIDTH, HEIGHT = 1280, 720
 DIMENSIONS = (WIDTH, HEIGHT)
 FPS = 60
-FONT = pygame.font.SysFont("freesans", 20)
+FONT = pygame.font.Font("freesansbold.ttf", 22)
 CURVES = ["lagrange", "bezier", "hermite_cubic", "cubic_spline"]
 
-pygame.init()
 screen = pygame.display.set_mode(DIMENSIONS)
 pygame.display.set_caption("Curves")
 screen.fill(WHITE)
@@ -61,13 +62,13 @@ def redraw():
   hermite_cubic_button.draw(screen, (0, 0, 0))
   cubic_spline_button.draw(screen, (0, 0, 0))
 
-  if abs(selected_button) = 1:
+  if abs(selected_button) == 1:
     curve_type = "Curve Type: Lagrange"
-  elif abs(selected_button) = 2:
+  elif abs(selected_button) == 2:
     curve_type = "Curve Type: Bezier"
-  elif abs(selected_button) = 3:
+  elif abs(selected_button) == 3:
     curve_type = "Curve Type: Hermite Cubic"
-  elif abs(selected_button) = 4:
+  elif abs(selected_button) == 4:
     curve_type = "Curve Type: Cubic Spline"
   else:
     curve_type = "Curve Type: None"
@@ -178,7 +179,26 @@ while run:
         break
   # hold while moving
   elif pressed and not old_pressed and left_click and not old_left_click:
-
+    if selected != -1:
+      screen.fill(WHITE)
+      points[selected] = [x, y]
+  # release
+  elif pressed and old_pressed and not left_click and not old_left_click:
+    selected = -1
+  # right click
+  elif pressed and not old_pressed and not right_click and old_right_click:
+    for i, point in enumerate(points):
+      if math.isclose(x, point[0], rel_tol=0.1) and math.isclose(y, point[1], rel_tol=0.1):
+        points.pop(i)
+        screen.fill(WHITE)
+        break
+  
+  if len(points) > 1:
+    draw_curve()
 
   pygame.display.update()
+  old_pressed = pressed
+  old_left_click = left_click
+  old_right_click = right_click
+  
 pygame.quit()
