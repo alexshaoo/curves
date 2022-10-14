@@ -163,6 +163,21 @@ while run:
     else:
       pressed = 0
 
+  left_click, _, right_click = pygame.mouse.get_pressed()
+  x, y = pygame.mouse.get_pos()
+
+  # click
+  if pressed and not old_pressed and not left_click and old_left_click:
+    points.append([x,y])
+    pygame.draw.rect(screen, BLUE, (x-MARGIN, y-MARGIN, 2*MARGIN, 2*MARGIN), 5)
+  # drag
+  elif not pressed and not old_pressed and left_click and old_left_click:
+    for i, point in enumerate(points):
+      if math.isclose(x, point[0], rel_tol=0.1) and math.isclose(y, point[1], rel_tol=0.1):
+        selected = i
+        break
+  # hold while moving
+  elif pressed and not old_pressed and left_click and not old_left_click:
 
 
   pygame.display.update()
