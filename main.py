@@ -48,13 +48,13 @@ clock = pygame.time.Clock()
 
 points = []
 knots = []
+numPoints = 0
 
 def redraw():
   screen.fill(WHITE)
-  l = len(points)
-  for i in range(l-1):
+  for i in range(numPoints-1):
     pygame.draw.line(screen, GREEN, points[i], points[i+1], 2)
-  for i in range(l):
+  for i in range(numPoints):
     pygame.draw.rect(screen, BLUE, (points[i][0]-MARGIN, points[i][1]-MARGIN, 2*MARGIN, 2*MARGIN), 5)
 
   lagrange_button.draw(screen, (0, 0, 0))
@@ -80,10 +80,9 @@ def lagrange():
 
 def bezier():
   redraw()
-  l = len(points)
   for i in np.arange(0, 1, STEP):
     z = np.zeroes(2)
-    for j in range(l):
+    for j in range(numPoints):
       z += np.dot((math.factorial(l-1) / (math.factorial(j) * math.factorial(l-j-1))) * (1-i)**(l-j-1) * i**j, points[j])
     pygame.draw.circle(screen, RED, (int(z[0]), int(z[1])), 3)
 
@@ -94,14 +93,13 @@ def cubic_spline():
   pass
 
 def draw_curve(color=GREEN, thickness=2):
-  l = len(points)
-  if l < 2:
+  if numPoints < 2:
     return
-  for i in range(l-1):
+  for i in range(numPoints-1):
     pygame.draw.line(screen, color, points[i], points[i+1], thickness)
-  for i in range(l):
+  for i in range(numPoints):
     pygame.draw.rect(screen, BLUE, (points[i][0]-MARGIN, points[i][1]-MARGIN, 2*MARGIN, 2*MARGIN), 5)
-    if l > 2:
+    if numPoints > 2:
       if selected_button == 1:
         lagrange()
       elif selected_button == 2:
@@ -126,7 +124,6 @@ lagrange_button, bezier_button, hermite_cubic_button, cubic_spline_button = [but
 
 while run:
   time_passed = clock.tick(FPS)
-  # frameRate = int(clock.get_fps())
 
   lagrange_button.draw(screen, (0, 0, 0))
   bezier_button.draw(screen, (0, 0, 0))
@@ -144,9 +141,8 @@ while run:
 
     pos = pygame.mouse.get_pos()
     if event.type == pygame.MOUSEBUTTONDOWN:
-      l = len(points)
       pressed = -1
-      if l > 2:
+      if numPoints > 2:
         if lagrange_button.clicked(pos):
           selected_button = 1
           lagrange()
@@ -159,44 +155,44 @@ while run:
         elif cubic_spline_button.clicked(pos):
           selected_button = 4
           cubic_spline()
-        else:
-          selected_button = -1
     elif event.type == pygame.MOUSEBUTTONUP:
       pressed = 1
     else:
       pressed = 0
 
-  left_click, _, right_click = pygame.mouse.get_pressed()
+  left_click, middle_click, right_click = pygame.mouse.get_pressed()
   x, y = pygame.mouse.get_pos()
 
   # click
-  if pressed and not old_pressed and not left_click and old_left_click:
+  if old_pressed == -1 and pressed == 1 and old_left_click == 1 and left_click == 0:
     points.append([x,y])
+    numPoints += 1
     pygame.draw.rect(screen, BLUE, (x-MARGIN, y-MARGIN, 2*MARGIN, 2*MARGIN), 5)
   # drag
-  elif not pressed and not old_pressed and left_click and old_left_click:
+  elif old_pressed == -1 and pressed == -1 and old_left_click == 1 and left_click == 1:
     for i, point in enumerate(points):
       if math.isclose(x, point[0], rel_tol=0.1) and math.isclose(y, point[1], rel_tol=0.1):
         selected = i
         break
   # hold while moving
-  elif pressed and not old_pressed and left_click and not old_left_click:
+  elif old_pressed == 0 and pressed == 0 and old_left_click == 1 and left_click == 1:
     if selected != -1:
       screen.fill(WHITE)
       points[selected] = [x, y]
   # release
-  elif pressed and old_pressed and not left_click and not old_left_click:
+  elif old_pressed == 1 and pressed == 1 and old_left_click == 0 and left_click == 0:
     selected = -1
   # right click
-  elif pressed and not old_pressed and not right_click and old_right_click:
+  elif old_pressed == -1 and pressed == 1 and old_right_click == 1 and right_click == 0:
     for i, point in enumerate(points):
       if math.isclose(x, point[0], rel_tol=0.1) and math.isclose(y, point[1], rel_tol=0.1):
         points.pop(i)
+        numPoints -= 1
         screen.fill(WHITE)
         break
   
-  if len(points) > 1:
-    draw_curve()
+  if numPoints > 1:
+    draw_curve(GREEN, 3)
 
   pygame.display.update()
   old_pressed = pressed
