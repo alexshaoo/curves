@@ -18,11 +18,6 @@ FPS = 60
 FONT = pygame.font.Font("freesansbold.ttf", 22)
 CURVES = ["lagrange", "bezier", "hermite_cubic", "cubic_spline"]
 
-screen = pygame.display.set_mode(DIMENSIONS)
-pygame.display.set_caption("Curves")
-screen.fill(WHITE)
-clock = pygame.time.Clock()
-
 class button():
   def __init__(self, color, x, y, width, height, text=''):
     self.color = color
@@ -45,6 +40,11 @@ class button():
 
   def clicked(self, pos):
     return self.x < pos[0] < self.x + self.width and self.y < pos[1] < self.y + self.height
+
+screen = pygame.display.set_mode(DIMENSIONS)
+pygame.display.set_caption("Curves")
+screen.fill(WHITE)
+clock = pygame.time.Clock()
 
 points = []
 knots = []
@@ -122,7 +122,7 @@ old_right_click = 0
 selected = -1
 selected_button = -1
 
-lagrange_button, bezier_button, hermite_cubic_button, cubic_spline_button = [button(BLACK, 650, 100*i, 100, 30, CURVES[i]) for i in range(4)]
+lagrange_button, bezier_button, hermite_cubic_button, cubic_spline_button = [button(BLUE, 1000, 100*i+300, 200, 50, CURVES[i]) for i in range(4)]
 
 while run:
   time_passed = clock.tick(FPS)
@@ -136,9 +136,11 @@ while run:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       run = False
+      continue
     if event.type == pygame.KEYDOWN:
       if event.key == pygame.K_ESCAPE:
         run = False
+        continue
 
     pos = pygame.mouse.get_pos()
     if event.type == pygame.MOUSEBUTTONDOWN:
