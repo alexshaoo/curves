@@ -54,8 +54,8 @@ def redraw():
   screen.fill(WHITE)
   for i in range(numPoints-1):
     pygame.draw.line(screen, GREEN, points[i], points[i+1], 2)
-  for i in range(numPoints):
-    pygame.draw.rect(screen, BLUE, (points[i][0]-MARGIN, points[i][1]-MARGIN, 2*MARGIN, 2*MARGIN), 5)
+  for point in points:
+    pygame.draw.rect(screen, BLUE, (point[0]-MARGIN, point[1]-MARGIN, 2*MARGIN, 2*MARGIN), 5)
 
   lagrange_button.draw(screen, (0, 0, 0))
   bezier_button.draw(screen, (0, 0, 0))
@@ -108,8 +108,6 @@ def draw_curve(color=GREEN, thickness=2):
         hermite_cubic()
       elif selected_button == 4:
         cubic_spline()
-      else:
-        pass
 
 run = True
 pressed = 0
